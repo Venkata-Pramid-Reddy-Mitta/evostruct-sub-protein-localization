@@ -2,7 +2,7 @@
 
 ## What This Project Does
 
-This project predicts the subcellular location of proteins in gram-positive bacteria using machine learning classification. It takes amino acid sequences as input and predicts which of four subcellular locations (cell membrane, cell wall, cytoplasm, extracellular) each protein is likely to be found in. The project combines evolutionary information from PSI-BLAST searches with structural features computed by SPIDER 2.0 to create a rich feature representation of each protein. Random Forest achieves 99.23% classification accuracy, demonstrating that combining multiple complementary features and ensemble methods can solve this challenging biological prediction problem.
+This project predicts the subcellular location of proteins in gram-positive bacteria using machine learning classification. It takes amino acid sequences as input and predicts which of four subcellular locations (cell membrane, cell wall, cytoplasm, extracellular) each protein is likely to be found in. The project combines evolutionary information from PSI-BLAST searches with structural features computed by SPIDER 2.0 to create a rich feature representation of each protein. With 10-fold cross-validation, SVM reaches 70.6% accuracy, Random Forest 69.9% and KNN 66.0%.
 
 ## Can I Run This?
 
@@ -31,9 +31,9 @@ pip install -r requirements.txt
 
 ### Run Classification (in this order)
 1. **notebooks/data_processing.ipynb** — Merges all feature files into a single training matrix
-2. **notebooks/knn.ipynb** — K-Nearest Neighbors classifier (77.74% accuracy)
-3. **notebooks/random_forest.ipynb** — Random Forest classifier (99.23% accuracy)
-4. **notebooks/svm_model.ipynb** — Support Vector Machine classifier (79.08% accuracy)
+2. **notebooks/knn.ipynb** — K-Nearest Neighbors classifier (66.0% 10-fold CV accuracy)
+3. **notebooks/random_forest.ipynb** — Random Forest classifier (69.9% 10-fold CV accuracy)
+4. **notebooks/svm_model.ipynb** — Support Vector Machine classifier (70.6% 10-fold CV accuracy)
 
 Or load pre-trained models without retraining:
 ```python
@@ -44,11 +44,13 @@ predictions = model.predict(X_test)
 
 ## Key Results
 
-| Model | Accuracy |
-|-------|----------|
-| Random Forest | 99.23% |
-| SVM | 79.08% |
-| KNN | 77.74% |
+| Model | 10-fold CV accuracy | Training-set accuracy |
+|---|---|---|
+| SVM | 70.6% | 79.08% |
+| Random Forest | 69.9% | 99.23% |
+| KNN | 66.0% | 77.74% |
+
+Training-set accuracy is measured on the same data the model was trained on, so it overstates real performance (Random Forest especially). Use the cross-validated numbers.
 
 ## Project Structure
 
@@ -65,19 +67,19 @@ The project is organized into logical folders for easy navigation:
 - **composition_features.csv** — Amino acid composition features (4 features per protein)
 - **auto_cov_features.csv** — Auto-covariance structural features from SPIDER 2.0 (200 features per protein)
 - **one_lead_bigram_asa.csv** — One-lead bigram Accessible Surface Area features (1 feature per protein)
-- **merged_df.csv** — **Final feature matrix** combining all extracted features. This is the input to all classifiers (405 features × 523 proteins)
+- **merged_df.csv** — **Final feature matrix** combining all extracted features. This is the input to all classifiers (235 features; 523 proteins, 521 after dropping rows with missing values)
 
 ### `notebooks/` — Jupyter Notebooks
 - **data_processing.ipynb** — Merges all feature CSVs into `merged_df.csv`. Run first.
 - **features_extraction.ipynb** — Extracts PSSM and SPIDER 2.0 features from raw sequences. Only run if re-extracting from scratch.
-- **knn.ipynb** — K-Nearest Neighbors classifier (77.74% accuracy). Saves model to `models/knn_final_model.pkl`.
-- **random_forest.ipynb** — Random Forest classifier (99.23% accuracy). **Best performing.** Saves model to `models/rf_final_model.pkl`.
-- **svm_model.ipynb** — Support Vector Machine classifier (79.08% accuracy). Saves model to `models/svm_final_model.pkl`.
+- **knn.ipynb** — K-Nearest Neighbors classifier (66.0% 10-fold CV accuracy). Saves model to `models/knn_final_model.pkl`.
+- **random_forest.ipynb** — Random Forest classifier (69.9% 10-fold CV accuracy). Saves model to `models/rf_final_model.pkl`.
+- **svm_model.ipynb** — Support Vector Machine classifier (70.6% 10-fold CV accuracy). Saves model to `models/svm_final_model.pkl`.
 
 ### `models/` — Pre-trained Models (Binary .pkl Format)
-- **knn_final_model.pkl** — Trained KNN model (77.74% accuracy). Load and use immediately.
-- **rf_final_model.pkl** — Trained Random Forest model (99.23% accuracy). **Best performing model.**
-- **svm_final_model.pkl** — Trained SVM model (79.08% accuracy). Load and use immediately.
+- **knn_final_model.pkl** — Trained KNN model (66.0% 10-fold CV accuracy). Load and use immediately.
+- **rf_final_model.pkl** — Trained Random Forest model (69.9% 10-fold CV accuracy).
+- **svm_final_model.pkl** — Trained SVM model (70.6% 10-fold CV accuracy). Load and use immediately.
 
 ### `scripts/` — Utility Scripts
 - **feature_extraction.R** — R script for amino acid composition feature extraction (alternative implementation)
@@ -165,6 +167,6 @@ spider2.pl g_data.fasta output_dir/
 **Features per protein:**
 - 200 PSSM features (evolutionary)
 - 4 composition features (amino acid percentages)
-- 200 auto-covariance features (structural)
+- 30 auto-covariance features (structural)
 - 1 one-lead bigram ASA feature (surface area)
-- **Total: 405 features per sequence**
+- **Total: 235 features per sequence**
