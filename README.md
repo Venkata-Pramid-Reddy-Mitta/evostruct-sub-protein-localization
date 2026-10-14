@@ -2,7 +2,7 @@
 
 ## What This Project Does
 
-This project predicts the subcellular location of proteins in gram-positive bacteria using machine learning classification. It takes amino acid sequences as input and predicts which of four subcellular compartments (cytoplasm, membrane, periplasm, extracellular) each protein is likely to be found in. The project combines evolutionary information from PSI-BLAST searches with structural features computed by SPIDER 2.0 to create a rich feature representation of each protein. Random Forest achieves 99.23% classification accuracy, demonstrating that combining multiple complementary features and ensemble methods can solve this challenging biological prediction problem.
+This project predicts the subcellular location of proteins in gram-positive bacteria using machine learning classification. It takes amino acid sequences as input and predicts which of four subcellular locations (cell membrane, cell wall, cytoplasm, extracellular) each protein is likely to be found in. The project combines evolutionary information from PSI-BLAST searches with structural features computed by SPIDER 2.0 to create a rich feature representation of each protein. Random Forest achieves 99.23% classification accuracy, demonstrating that combining multiple complementary features and ensemble methods can solve this challenging biological prediction problem.
 
 ## Can I Run This?
 
@@ -157,10 +157,10 @@ spider2.pl g_data.fasta output_dir/
 **Size:** 523 protein sequences
 
 **Classes:** 4 subcellular locations
-- Cytoplasm (Fold1)
-- Membrane (Fold2)
-- Periplasm (Fold3)
-- Extracellular (Fold4)
+- Cell membrane (Fold1): 174 proteins
+- Cell wall (Fold2): 18 proteins
+- Cytoplasm (Fold3): 208 proteins
+- Extracellular (Fold4): 123 proteins
 
 **Features per protein:**
 - 200 PSSM features (evolutionary)
